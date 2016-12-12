@@ -30,3 +30,13 @@ body, html{
 .select-layers-container button{
   width: 50px;
 }
+
+.map-levels-container {
+  position: fixed;
+  top: 140px;
+  color: white;
+}
+
+.map-levels-container button{
+  width: 50px;
+}

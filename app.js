@@ -63,7 +63,9 @@ io.on('connection', function (socket) {
       io.in(data.room).emit('path:drawn', {
         path: data.path,
         user_id: data.user_id,
-        path_id: data.path_id
+        path_id: data.path_id,
+        layer: data.layer,
+        map_level: data.map_level,
       });
    });
 

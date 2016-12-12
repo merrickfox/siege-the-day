@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
     dataType: 'json'
   });
 
+  $(document).keydown(function(e){
+    if( e.which === 90 && (event.ctrlKey||event.metaKey) && e.shiftKey ){
+      //redo
+    }
+    else if( e.which === 90 && (event.ctrlKey||event.metaKey) ){
+      removeLast();
+    }
+  });
+
   socket = io.connect();
 
   var mouse = {
@@ -50,12 +59,16 @@ document.addEventListener("DOMContentLoaded", function() {
     var id = getRandomString();
     if(canvasObjects.length !== 0){
        canvasObjects[canvasObjects.length -1].id = id; //Get last object
+       canvasObjects[canvasObjects.length -1].layer = currentLayer;
+       canvasObjects[canvasObjects.length -1].map_level = currentMapLevel;
     }
 
     socket.emit('path:drawn', {
       room: roomId,
       user_id: userId,
       path_id: id,
+      layer: currentLayer,
+      map_level: currentMapLevel,
       path: e
     })
   }
@@ -77,6 +90,8 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log('socket path: ', data.path)
       var path = data.path.path;
       path.id = data.path_id;
+      path.layer = data.layer;
+      path.map_level = data.map_level;
       addPaths(path);
     }
   });
@@ -109,6 +124,16 @@ function removeLast () {
    }
 }
 
+function exp () {
+  var canvasObjects = canvas._objects;
+
+  if(canvasObjects.length !== 0){
+    canvasObjects[canvasObjects.length -1].visible = !canvasObjects[canvasObjects.length -1].visible;
+    canvas.renderAll()
+  }
+  console.log(canvasObjects);
+}
+
 function removePaths (paths) {
 
 }
@@ -126,3 +151,5 @@ function addPaths (paths) {
 function getRandomString () {
   return Math.random().toString(36).substring(7);
 }
+
+
