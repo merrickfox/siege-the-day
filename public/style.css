@@ -9,3 +9,24 @@ body, html{
 #canvas {
    display: block;
 }
+
+
+.layers-container {
+  position: fixed;
+  top: 0;
+  color: white;
+}
+
+.layers-container button{
+  width: 50px;
+}
+
+.select-layers-container {
+  position: fixed;
+  top: 60px;
+  color: white;
+}
+
+.select-layers-container button{
+  width: 50px;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Room</title>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="style.css" />
+      <script src="socket.io/socket.io.js"></script>
+      <script src="ui.js"></script>
+      <script src="events.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.1/fabric.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
+   </head>
+   <body>
+      <canvas id="drawing"></canvas>
+      <div class="layers-container">
+        <ul>
+          <li>
+            <button onclick="toggleLayer(0)">1</button>
+          </li>
+          <li>
+            <button onclick="toggleLayer(1)">2</button>
+          </li>
+          <li>
+            <button onclick="toggleLayer(2)">3</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="select-layers-container">
+        <ul>
+          <li>
+            <button onclick="setCurrent(0)">select 1</button>
+          </li>
+          <li>
+            <button onclick="setCurrent(1)">select 2</button>
+          </li>
+          <li>
+            <button onclick="setCurrent(2)">select 3</button>
+          </li>
+
+          <li>
+            <button onclick="removeLast()">clear</button>
+          </li>
+        </ul>
+      </div>
+   </body>
+</html>

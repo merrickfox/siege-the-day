@@ -8,11 +8,11 @@ var Strat = require('./strat');
 var bodyParser = require('body-parser');
 var server = http.createServer(app);
 var io = socketIo.listen(server);
-server.listen(8080);
+server.listen(8000);
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-console.log("Server running on 127.0.0.1:8080!!");
+console.log("Server running on 127.0.0.1:8000!!");
 mongoose.connect('mongodb://localhost/siege-dev');
 
 app.get('/', function (req, res) {
@@ -20,7 +20,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/:id', function (req, res) {
-   res.sendFile( __dirname + "/public/room.html" );
+   res.sendFile( __dirname + "/public/strat.html" );
 })
 
 app.post('/api/strat', function(req, res) {
@@ -60,7 +60,19 @@ io.on('connection', function (socket) {
     });
   })
    socket.on('path:drawn', function (data) {
-      io.in(data.room).emit('path:drawn', { path: data.path });
+      io.in(data.room).emit('path:drawn', {
+        path: data.path,
+        user_id: data.user_id,
+        path_id: data.path_id
+      });
+   });
+
+   socket.on('path:remove', function (data) {
+      io.in(data.room).emit('path:remove', {
+        path: data.path,
+        user_id: data.user_id,
+        path_id: data.path_id
+      });
    });
 });
 
