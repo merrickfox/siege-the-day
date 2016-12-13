@@ -19,7 +19,7 @@ var currentMapLevel = 0;
 
 function toggleLayer(idx) {
   layers[idx].visible = !layers[idx].visible
-  console.log(layers)
+  calculateDisplayed();
 }
 
 function setCurrent(idx) {
@@ -32,19 +32,19 @@ function setLevel(level) {
     backgroundImageStretch: false
   });
 
-  displayLevel(level);
+  calculateDisplayed();
 }
 
-function displayLevel (level) {
+function calculateDisplayed (level) {
   var canvasObjects = canvas._objects;
   _.forEach(canvasObjects, function (obj) {
-    if (obj.map_level === level) {
+    var objLayer = obj.layer;
+    if (obj.map_level === currentMapLevel && layers[objLayer].visible) {
       obj.visible = true;
     } else {
       obj.visible = false;
     }
   })
-  console.log(canvas._objects);
   canvas.renderAll();
 }
 
