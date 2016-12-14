@@ -67,14 +67,17 @@ function submitUsername() {
 function populateUserList() {
   var color = '#'; // hexadecimal starting symbol
   var letters = ['2f71d4','5f2fd4','d42fc0','d42f4d','2f97d4','2fd488','9cd42f','d49a2f', 'd42f2f']; //Set your colors here
+  var userEl = [];
   $.each(users, function(index, value) {
     var col = color + letters[Math.floor(Math.random() * letters.length)];
-    $('<div />', {
+    userEl.push($('<div />', {
       'text': value,
       'class': 'user',
       'style': 'background-color: ' + col
-    }).appendTo('.users-container');
+    }))
+
   });
+  $('.users-container').empty().append(userEl);
 }
 
 document.addEventListener("DOMContentLoaded", function() {

@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 // create a schema
 var stratSchema = new Schema({
   id: String,
-  map: String
+  map: String,
+  userlist: Array
 });
 
 // the schema is useless so far

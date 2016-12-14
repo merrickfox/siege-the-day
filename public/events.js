@@ -139,7 +139,7 @@ function setupEvents() {
 
   socket.on('someone_joined', function(data) {
     console.log('someone_joined', data)
-    users.push(data.username);
+    users = data.userlist;
     populateUserList();
   });
 

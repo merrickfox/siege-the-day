@@ -28,9 +28,9 @@ app.post('/api/strat', function(req, res) {
   var map = req.body.map;
   var strat = new Strat({
       id: id,
-      map: map
+      map: map,
+      userlist: []
     });
-  console.log(strat);
 
   var promise = strat.save();
 
@@ -54,12 +54,23 @@ io.on('connection', function (socket) {
   console.log('connected');
 
   socket.on('subscribe', function(data) {
+    console.log('someone joined', data)
     socket.join(data.room);
-    io.in(data.room).emit('someone_joined', {
-      map: socket.map,
-      username: data.username
-    });
+
+    Strat.findOneAndUpdate(
+      {id: data.room},
+      {$push: {userlist: data.username}},
+      {safe: true, upsert: false, new:true},
+      function(err, model) {
+        console.log('model updated to:', model)
+        io.in(data.room).emit('someone_joined', {
+          map: model.map,
+          userlist: model.userlist
+        });
+      }
+    );
   })
+
    socket.on('path:drawn', function (data) {
       io.in(data.room).emit('path:drawn', {
         path: data.path,
