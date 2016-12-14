@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  socket = io.connect();
+
 
   var mouse = {
     click: false,
@@ -53,54 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
     $("body").scrollLeft(640);
     $("body").scrollTop(360);
   }, 20)
-
-  function pathDrawn (e) {
-    var canvasObjects = canvas._objects;
-    var id = getRandomString();
-    if(canvasObjects.length !== 0){
-       canvasObjects[canvasObjects.length -1].id = id; //Get last object
-       canvasObjects[canvasObjects.length -1].layer = currentLayer;
-       canvasObjects[canvasObjects.length -1].map_level = currentMapLevel;
-    }
-
-    socket.emit('path:drawn', {
-      room: roomId,
-      user_id: userId,
-      path_id: id,
-      layer: currentLayer,
-      map_level: currentMapLevel,
-      path: e
-    })
-  }
-
-  socket.on('connect', function(data) {
-      // Connected, let's sign-up for to receive messages for this room
-    socket.emit("subscribe", {
-      room: roomId
-    });
-  });
-
-  socket.on('someone_joined', function(data) {
-  });
-
-  socket.on('path:drawn', function(data) {
-    layers[currentLayer].data.push(data.path.path);
-
-    if (data.user_id !== userId) {
-      console.log('socket path: ', data.path)
-      var path = data.path.path;
-      path.id = data.path_id;
-      path.layer = data.layer;
-      path.map_level = data.map_level;
-      addPaths(path);
-    }
-  });
-
-  socket.on('path:remove', function(data) {
-    if (data.user_id !== userId) {
-      remove(data.path_id);
-    }
-  });
 });
 
 function remove (id) {
@@ -112,7 +64,6 @@ function remove (id) {
 
 function removeLast () {
   var canvasObjects = canvas._objects;
-  console.log(canvasObjects);
     if(canvasObjects.length !== 0){
      var last = canvasObjects[canvasObjects.length -1]; //Get last object
      canvas.remove(last);
@@ -143,6 +94,7 @@ function addPaths (paths) {
     fabric.util.enlivenObjects([path], function(objects) {
       objects.forEach(function(o) {
         canvas.add(o);
+        calculateDisplayed();
       });
     });
   });
@@ -150,6 +102,66 @@ function addPaths (paths) {
 
 function getRandomString () {
   return Math.random().toString(36).substring(7);
+}
+
+function joinRoom() {
+  socket = io.connect();
+  setupEvents();
+}
+
+function pathDrawn (e) {
+    var canvasObjects = canvas._objects;
+    var id = getRandomString();
+    if(canvasObjects.length !== 0){
+       canvasObjects[canvasObjects.length -1].id = id; //Get last object
+       canvasObjects[canvasObjects.length -1].layer = currentLayer;
+       canvasObjects[canvasObjects.length -1].map_level = currentMapLevel;
+    }
+
+    socket.emit('path:drawn', {
+      room: roomId,
+      user_id: userId,
+      path_id: id,
+      layer: currentLayer,
+      map_level: currentMapLevel,
+      path: e
+    })
+  }
+
+function setupEvents() {
+  socket.on('connect', function(data) {
+      // Connected, let's sign-up for to receive messages for this room
+    socket.emit("subscribe", {
+      room: roomId,
+      username: username
+    });
+  });
+
+  socket.on('someone_joined', function(data) {
+    console.log('someone_joined', data)
+    users.push(data.username);
+    populateUserList();
+  });
+
+  socket.on('path:drawn', function(data) {
+    layers[currentLayer].data.push(data.path.path);
+
+    if (data.user_id !== userId) {
+      console.log('socket path: ', data.path)
+      var path = data.path.path;
+      path.id = data.path_id;
+      path.layer = data.layer;
+      path.map_level = data.map_level;
+      addPaths(path);
+    }
+
+  });
+
+  socket.on('path:remove', function(data) {
+    if (data.user_id !== userId) {
+      remove(data.path_id);
+    }
+  });
 }
 
 

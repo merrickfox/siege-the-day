@@ -56,7 +56,8 @@ io.on('connection', function (socket) {
   socket.on('subscribe', function(data) {
     socket.join(data.room);
     io.in(data.room).emit('someone_joined', {
-      map: socket.map
+      map: socket.map,
+      username: data.username
     });
   })
    socket.on('path:drawn', function (data) {

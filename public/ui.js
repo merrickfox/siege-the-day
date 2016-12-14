@@ -13,6 +13,8 @@ var layers = [
   },
 ];
 
+var users = [];
+var username;
 
 var currentLayer = 0;
 var currentMapLevel = 0;
@@ -54,3 +56,36 @@ var mapInfo = {
   }
 }
 var map = mapInfo.bank;
+
+function submitUsername() {
+  username = $('.username-field').val();
+  $('.username-modal').fadeOut(500);
+  $('.veil').fadeOut(500);
+  joinRoom();
+}
+
+function populateUserList() {
+  var color = '#'; // hexadecimal starting symbol
+  var letters = ['2f71d4','5f2fd4','d42fc0','d42f4d','2f97d4','2fd488','9cd42f','d49a2f', 'd42f2f']; //Set your colors here
+  $.each(users, function(index, value) {
+    var col = color + letters[Math.floor(Math.random() * letters.length)];
+    $('<div />', {
+      'text': value,
+      'class': 'user',
+      'style': 'background-color: ' + col
+    }).appendTo('.users-container');
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  populateUserList();
+
+  $('.username-field').keyup(function() {
+   var value = $(this).val();
+   if (value.length > 0) {
+    $('#username-button').attr("disabled", false);
+   } else {
+    $('#username-button').attr("disabled", true);
+   }
+  });
+})

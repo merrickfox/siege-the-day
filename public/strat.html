@@ -10,19 +10,20 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.1/fabric.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
    </head>
    <body>
       <canvas id="drawing"></canvas>
       <div class="layers-container">
         <ul>
           <li>
-            <button onclick="toggleLayer(0)">1</button>
+            <button onclick="toggleLayer(0)">toggle 1</button>
           </li>
           <li>
-            <button onclick="toggleLayer(1)">2</button>
+            <button onclick="toggleLayer(1)">toggle 2</button>
           </li>
           <li>
-            <button onclick="toggleLayer(2)">3</button>
+            <button onclick="toggleLayer(2)">toggle 3</button>
           </li>
         </ul>
       </div>
@@ -30,13 +31,13 @@
       <div class="select-layers-container">
         <ul>
           <li>
-            <button onclick="setCurrent(0)">select 1</button>
+            <button onclick="setCurrent(0)">draw on 1</button>
           </li>
           <li>
-            <button onclick="setCurrent(1)">select 2</button>
+            <button onclick="setCurrent(1)">draw on 2</button>
           </li>
           <li>
-            <button onclick="setCurrent(2)">select 3</button>
+            <button onclick="setCurrent(2)">draw on 3</button>
           </li>
 
           <li>
@@ -48,19 +49,29 @@
       <div class="map-levels-container">
         <ul>
           <li>
-            <button onclick="setLevel(0)">select 0</button>
+            <button onclick="setLevel(0)">level 0</button>
           </li>
           <li>
-            <button onclick="setLevel(1)">select 1</button>
+            <button onclick="setLevel(1)">level 1</button>
           </li>
           <li>
-            <button onclick="setLevel(2)">select 2</button>
+            <button onclick="setLevel(2)">level 2</button>
           </li>
 
           <li>
-            <button onclick="setLevel(3)">select 3</button>
+            <button onclick="setLevel(3)">level 3</button>
           </li>
         </ul>
+      </div>
+
+      <div class="users-container">
+      </div>
+
+      <div class="veil"></div>
+      <div class="username-modal">
+        <h1>Who Dis?</h1>
+        <input class="username-field" type="text">
+        <button id="username-button" disabled="true" onclick="submitUsername()">Begin</button>
       </div>
    </body>
 </html>
