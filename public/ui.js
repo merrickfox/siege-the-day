@@ -18,6 +18,7 @@ var username;
 
 var currentLayer = 0;
 var currentMapLevel = 0;
+var textColor = '#fff';
 
 function toggleLayer(idx) {
   layers[idx].visible = !layers[idx].visible
@@ -70,9 +71,11 @@ function populateUserList() {
   var userEl = [];
   $.each(users, function(index, value) {
     var col = color + letters[Math.floor(Math.random() * letters.length)];
+    var shortName = value[0];
     userEl.push($('<div />', {
-      'text': value,
+      'text': shortName,
       'class': 'user',
+      'title': value,
       'style': 'background-color: ' + col
     }))
 
@@ -80,8 +83,41 @@ function populateUserList() {
   $('.users-container').empty().append(userEl);
 }
 
+function toolSelect(type) {
+  switch (type) {
+    case 'pencil':
+      canvas.isDrawingMode = true;
+      break;
+    case 'text':
+      canvas.isDrawingMode = false;
+      var text = canvas.add(new fabric.IText('Text goes here', {
+        left: 640 + window.scrollX - 150,
+        top: 360 + window.scrollY + 150,
+        fill: textColor
+      }));
+      canvas.renderAll();
+      break;
+  }
+
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   populateUserList();
+
+  $("#pencil-color-picker").spectrum({
+    color: "#f00",
+    change: function(color) {
+      canvas.freeDrawingBrush.color = color.toHexString();
+    }
+  });
+
+  $("#text-color-picker").spectrum({
+    color: "#fff",
+    change: function(color) {
+      textColor = color.toHexString();
+    }
+  });
+
 
   $('.username-field').keyup(function() {
    var value = $(this).val();

@@ -11,6 +11,9 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.1/fabric.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
       <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+      <script src="/scripts/spectrum-colorpicker/spectrum.js"></script>
+      <link href="/scripts/spectrum-colorpicker/spectrum.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
    </head>
    <body>
       <canvas id="drawing"></canvas>
@@ -65,6 +68,22 @@
       </div>
 
       <div class="users-container">
+      </div>
+
+      <div class="tools">
+        <div class="pencil item" onclick="toolSelect('pencil')" title="Draw">
+          <i class="fa fa-pencil item" aria-hidden="true"></i>
+          <input type="text" id="pencil-color-picker" class="item">
+        </div>
+
+        <div class="text item" onclick="toolSelect('text')" title="Add Text Box">
+          <i class="fa fa-font" aria-hidden="true" class="item"></i>
+          <input type="text" id="text-color-picker" class="item">
+        </div>
+
+        <div class="icon item" onclick="toolSelect('icon')" title="Coming soon..">
+          <i class="fa fa-shield item" aria-hidden="true"></i>
+        </div>
       </div>
 
       <div class="veil"></div>

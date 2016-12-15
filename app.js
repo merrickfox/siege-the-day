@@ -10,6 +10,7 @@ var server = http.createServer(app);
 var io = socketIo.listen(server);
 server.listen(8000);
 app.use(express.static(__dirname + '/public'));
+app.use('/scripts/', express.static(__dirname + '/node_modules'));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 console.log("Server running on 127.0.0.1:8000!!");
@@ -87,6 +88,20 @@ io.on('connection', function (socket) {
         user_id: data.user_id,
         path_id: data.path_id
       });
+   });
+
+   socket.on('leave', function (data) {
+      Strat.findOneAndUpdate(
+      {id: data.room},
+      {$pull: {userlist: data.username}},
+      {safe: true, upsert: false, new:true},
+      function(err, model) {
+        console.log('model updated to:', model)
+        io.in(data.room).emit('someone_left', {
+          userlist: model.userlist
+        });
+      }
+    );
    });
 });
 

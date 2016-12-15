@@ -143,6 +143,12 @@ function setupEvents() {
     populateUserList();
   });
 
+  socket.on('someone_left', function(data) {
+    console.log('someone_left', data)
+    users = data.userlist;
+    populateUserList();
+  });
+
   socket.on('path:drawn', function(data) {
     layers[currentLayer].data.push(data.path.path);
 
@@ -162,6 +168,13 @@ function setupEvents() {
       remove(data.path_id);
     }
   });
+
+  window.onbeforeunload = function(){
+    socket.emit("leave", {
+      room: roomId,
+      username: username
+    });
+  }
 }
 
 
