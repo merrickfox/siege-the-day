@@ -4,6 +4,20 @@ var canvas, socket;
 console.log(roomId)
 
 document.addEventListener("DOMContentLoaded", function() {
+  fabric.Canvas.prototype.getObjectByUUID = function(uuid) {
+    var object = null
+    var objects = this.getObjects()
+
+    for (var i = 0, len = this.size(); i < len; i++) {
+      if (objects[i].id && objects[i].id === uuid) {
+        object = objects[i]
+        break
+      }
+    }
+
+    return object
+  }
+
   $.ajax({
     type: "Get",
     url: '/api/strat/' + roomId,
@@ -38,7 +52,8 @@ document.addEventListener("DOMContentLoaded", function() {
     isDrawingMode: true
   });
   canvas.on('path:created', pathDrawn)
-
+  canvas.on('object:modified', objectModified)
+  canvas.on('object:added', objectAdded)
   canvas.freeDrawingBrush.color = '#ff0000';
   canvas.freeDrawingBrush.width = 5;
   var width = 2560;
@@ -109,6 +124,43 @@ function joinRoom() {
   setupEvents();
 }
 
+objectModified = function(e) {
+  var fabricObject = e.target;
+  socket.emit('object:modified', {
+      room: roomId,
+      user_id: userId,
+      object_id: fabricObject.id,
+      layer: currentLayer,
+      map_level: currentMapLevel,
+      object: fabricObject
+    });
+}
+
+objectAdded = function (e) {
+  var fabricObject = e.target
+  var canvasObjects = canvas._objects;
+
+  if(!fabricObject.remote) {
+    var id = getRandomString();
+
+    if(canvasObjects.length !== 0){
+      canvasObjects[canvasObjects.length -1].id = id; //Get last object
+      canvasObjects[canvasObjects.length -1].layer = currentLayer;
+      canvasObjects[canvasObjects.length -1].map_level = currentMapLevel;
+    }
+
+    socket.emit('object:added', {
+      room: roomId,
+      user_id: userId,
+      object_id: id,
+      layer: currentLayer,
+      map_level: currentMapLevel,
+      object: fabricObject
+    });
+  }
+  delete fabricObject.remote
+}
+
 function pathDrawn (e) {
     var canvasObjects = canvas._objects;
     var id = getRandomString();
@@ -169,6 +221,46 @@ function setupEvents() {
     }
   });
 
+  socket.on('object:added', function(data) {
+    if (data.user_id === userId) return;
+    // Revive group objects.
+    if(data.object.type === 'group') {
+      data.object.objects = data.object.__objects
+      delete data.object.fill
+    }
+    fabric.util.enlivenObjects([data.object], function(fabricObjects) {
+      fabricObjects.forEach(function(fabricObject) {
+        // Prevent infinite loop, because this triggers canvas`
+        // object:added, which in turn calls this function.
+        fabricObject.remote = true
+        fabricObject.id = data.object_id;
+        fabricObject.layer = data.layer;
+        fabricObject.map_level = data.map_level;
+        canvas.add(fabricObject)
+      })
+    })
+  })
+
+  socket.on('object:modified', function(data) {
+    data.object.id = data.object_id;
+    if (data.user_id === userId) return;
+    // TODO: This can probably be fixed in fabricjs' toObject.
+    // Serialization issue. Remove group fill.
+    if(data.object.type === 'group') {
+      delete data.object.fill
+      delete data.object.stroke
+    }
+
+    var fabricObject = canvas.getObjectByUUID(data.object.id)
+    if(fabricObject) {
+      // Update all the properties of the fabric object.
+      fabricObject.set(data.object)
+      canvas.renderAll()
+    } else {
+      console.warn('No object found in scene:', data.object.id)
+    }
+  })
+
   window.onbeforeunload = function(){
     socket.emit("leave", {
       room: roomId,
@@ -176,5 +268,7 @@ function setupEvents() {
     });
   }
 }
+
+
 
 

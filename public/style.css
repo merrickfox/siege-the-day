@@ -8,6 +8,11 @@ body, html{
    font-family: 'Roboto', sans-serif;
    text-transform: uppercase;
 }
+
+body {
+  background: url("assets/bg1.jpg") no-repeat top center fixed;
+  background-size: cover;
+}
 #canvas {
    display: block;
 }
@@ -123,4 +128,31 @@ body, html{
   font-size: 20px;
   color: white;
   cursor: pointer;
+}
+
+header {
+  color: white;
+  background-color: rgba(0,0,0, .4);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+header .title {
+  display: flex;
+  margin-left: 16px;
+}
+
+header .menu-item {
+  display: flex;
+  margin-left: 16px;
+  margin-right: 16px;
+  color: white;
+}
+
+a:link, a:visited, a:hover, a:active {
+  text-decoration: none;
+  color: #fff;
 }

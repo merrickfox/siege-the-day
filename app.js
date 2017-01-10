@@ -55,7 +55,6 @@ io.on('connection', function (socket) {
   console.log('connected');
 
   socket.on('subscribe', function(data) {
-    console.log('someone joined', data)
     socket.join(data.room);
 
     Strat.findOneAndUpdate(
@@ -63,7 +62,6 @@ io.on('connection', function (socket) {
       {$push: {userlist: data.username}},
       {safe: true, upsert: false, new:true},
       function(err, model) {
-        console.log('model updated to:', model)
         io.in(data.room).emit('someone_joined', {
           map: model.map,
           userlist: model.userlist
@@ -75,6 +73,27 @@ io.on('connection', function (socket) {
    socket.on('path:drawn', function (data) {
       io.in(data.room).emit('path:drawn', {
         path: data.path,
+        user_id: data.user_id,
+        path_id: data.path_id,
+        layer: data.layer,
+        map_level: data.map_level,
+      });
+   });
+
+   socket.on('object:added', function (data) {
+      io.in(data.room).emit('object:added', {
+        object: data.object,
+        user_id: data.user_id,
+        object_id: data.object_id,
+        layer: data.layer,
+        map_level: data.map_level,
+      });
+   });
+
+   socket.on('object:modified', function (data) {
+      io.in(data.room).emit('object:modified', {
+        object: data.object,
+        object_id: data.object_id,
         user_id: data.user_id,
         path_id: data.path_id,
         layer: data.layer,
@@ -96,7 +115,6 @@ io.on('connection', function (socket) {
       {$pull: {userlist: data.username}},
       {safe: true, upsert: false, new:true},
       function(err, model) {
-        console.log('model updated to:', model)
         io.in(data.room).emit('someone_left', {
           userlist: model.userlist
         });
